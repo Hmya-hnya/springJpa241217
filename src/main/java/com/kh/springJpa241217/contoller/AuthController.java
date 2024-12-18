@@ -39,14 +39,14 @@ public class AuthController {
         boolean isSuccess = authService.login(loginReqDto);
         return ResponseEntity.ok(isSuccess);
     }
-    // 회원 전체 조회
-    @GetMapping("/members")
-    public List<MemberResDto> getAllMembers() {
-        return authService.findAllMembers(); // 모든 회원 리스트 반환
-    }
-    // 특정 회원 이메일 조회
-    @GetMapping("/member/{email}")
-    public MemberResDto getMemberByEmail(@PathVariable String email) {
-        return authService.findMemberByEmail(email); // 이메일로 회원 조회
-    }
+//    // 회원 전체 조회
+//    @GetMapping("/members")
+//    public List<MemberResDto> getAllMembers() {
+//        return authService.findAllMembers(); // 모든 회원 리스트 반환
+//    }
+//    // 특정 회원 이메일 조회
+//    @GetMapping("/member/{email}")
+//    public MemberResDto getMemberByEmail(@PathVariable String email) {
+//        return authService.findMemberByEmail(email); // 이메일로 회원 조회
+//    }
 }

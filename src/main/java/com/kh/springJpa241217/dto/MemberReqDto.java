@@ -13,4 +13,5 @@ public class MemberReqDto {
     private String email;
     private String pwd;
     private String name;
+    private String imgPath;
 }

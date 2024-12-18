@@ -58,28 +58,28 @@ public class AuthService {
         return member;
     }
     // 모든 회원 조회
-    public List<MemberResDto> findAllMembers() {
-        List<Member> members = memberRepository.findAll(); // JpaRepository 기본 메서드 활용
-        return members.stream()
-                .map(this::convertEntityToDto) // Entity -> DTO 변환
-                .collect(Collectors.toList());
-    }
-
-    // 특정 이메일로 회원 조회
-    public MemberResDto findMemberByEmail(String email) {
-        Optional<Member> memberOpt = memberRepository.findByEmail(email);
-        return memberOpt.map(this::convertEntityToDto).orElse(null); // Optional 처리
-    }
-
-    // Entity -> DTO 변환 (생성자 사용)
-    private MemberResDto convertEntityToDto(Member member) {
-        // 생성자를 사용하여 DTO 객체 생성
-        return new MemberResDto(
-                member.getEmail(),
-                member.getName(),
-                member.getImgPath(),
-                member.getRegDate()
-        );
-    }
+//    public List<MemberResDto> findAllMembers() {
+//        List<Member> members = memberRepository.findAll(); // JpaRepository 기본 메서드 활용
+//        return members.stream()
+//                .map(this::convertEntityToDto) // Entity -> DTO 변환
+//                .collect(Collectors.toList());
+//    }
+//
+//    // 특정 이메일로 회원 조회
+//    public MemberResDto findMemberByEmail(String email) {
+//        Optional<Member> memberOpt = memberRepository.findByEmail(email);
+//        return memberOpt.map(this::convertEntityToDto).orElse(null); // Optional 처리
+//    }
+//
+//    // Entity -> DTO 변환 (생성자 사용)
+//    private MemberResDto convertEntityToDto(Member member) {
+//        // 생성자를 사용하여 DTO 객체 생성
+//        return new MemberResDto(
+//                member.getEmail(),
+//                member.getName(),
+//                member.getImgPath(),
+//                member.getRegDate()
+//        );
+//    }
 
 }
