@@ -2,17 +2,13 @@ package com.kh.springJpa241217.service;
 
 import com.kh.springJpa241217.dto.LoginReqDto;
 import com.kh.springJpa241217.dto.MemberReqDto;
-import com.kh.springJpa241217.dto.MemberResDto;
 import com.kh.springJpa241217.entity.Member;
 import com.kh.springJpa241217.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Slf4j // 로그 정보를 출력하기 위해 사용

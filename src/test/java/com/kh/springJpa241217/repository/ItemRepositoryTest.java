@@ -76,9 +76,56 @@ class ItemRepositoryTest {
     @DisplayName("내림차순 정렬")
     public void sortPrice() {
         this.createItemTest();
-        List<Item> itemList = itemRepository.findByPrice();
+        List<Item> itemList = itemRepository.findAllByOrderByPriceDesc();
         for(Item item : itemList) {
             log.info("내림차순 정렬: {}", item);
+        }
+    }
+    @Test
+    @DisplayName("키워드")
+    public void findKeyword() {
+        this.createItemTest();
+        List<Item> itemList = itemRepository.findByItemNumContaining("5");
+        for(Item item : itemList) {
+            log.info("특정 키워드 상품 검색: {}", item);
+        }
+    }
+    @Test
+    @DisplayName("상품명과 가격 일치")
+    public void findPriceAndNum() {
+        this.createItemTest();
+        List<Item> itemList = itemRepository.findByItemNumAndPrice("테스트 상품5", 5000);
+        for(Item item : itemList) {
+            log.info("상품명과 가격 일치 테스트: {}", item);
+        }
+    }
+    @Test
+    @DisplayName("가격 사이")
+    public void betweenPrice() {
+        this.createItemTest();
+        List<Item> itemList = itemRepository.findByPriceBetween(3000, 7000);
+        for(Item item : itemList) {
+            log.info("가격 중간값 테스트: {}", item);
+        }
+    }
+    //JPQL 테스트
+    @Test
+    @DisplayName("JPQL 상세정보 테스트")
+    public void JPQLTest() {
+        this.createItemTest();
+        List<Item> itemList = itemRepository.findByItemDetail("설명1");
+        for(Item item : itemList) {
+            log.info("JPQL Like 테스트: {}", item);
+        }
+    }
+    // nativeQuery
+    @Test
+    @DisplayName("nativeQuery 테스트")
+    public void nativeQueryTest() {
+        this.createItemTest();
+        List<Item> itemList = itemRepository.findByItemDetailByNative("설명1");
+        for(Item item : itemList) {
+            log.info("nativeQuery Like 테스트: {}", item);
         }
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -63,8 +62,6 @@ public class MemberService {
             return false;
         }
     }
-
-
     // Member Entity => MemberResDto 로 변환
     private MemberResDto convertEntityToDto(Member member) {
         MemberResDto memberResDto = new MemberResDto();
@@ -74,4 +71,5 @@ public class MemberService {
         memberResDto.setImagePath(member.getImgPath());
         return memberResDto;
     }
+
 }
