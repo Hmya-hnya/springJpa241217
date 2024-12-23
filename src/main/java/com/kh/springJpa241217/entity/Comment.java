@@ -6,11 +6,10 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter @ToString
+@Getter @Setter @ToString(exclude = {"board", "member"}) // 순환 참조 방지
 @NoArgsConstructor
 @Table(name = "comment")
 public class Comment {
@@ -19,7 +18,7 @@ public class Comment {
     private Long commentId; // comment_id
 
     @ManyToOne
-    @JoinColumn(name = "board_id")  // 연관관계 매핑
+    @JoinColumn(name = "board_id")  // 연관관계 매핑, 참조키는 해당 객체의 기본키 이어야 함.
     private Board board;
 
     @ManyToOne
@@ -29,6 +28,7 @@ public class Comment {
     @Column(length = 1000)
     private String content;
 
+    @Column(nullable = false, updatable = false)
     private LocalDateTime regDate;
     @PrePersist
     public void prePersist() {
