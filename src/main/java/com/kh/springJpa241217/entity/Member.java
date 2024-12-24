@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity // 해당 클래스가 Entity 임을 나타냄
 @Table(name="member") // 테이블 이름 지정, 테이블 이름은 소문자, 카멜 표기법 -> 스네이크 표기법으로 변경됨
@@ -29,4 +31,9 @@ public class Member {
     protected void onCreate() {
         this.regDate = LocalDateTime.now();
     }
+    // 게시글 목록에 대한 OntoMany
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Board> boards = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
 }

@@ -2,6 +2,7 @@ package com.kh.springJpa241217.contoller;
 
 import com.kh.springJpa241217.dto.BoardReqDto;
 import com.kh.springJpa241217.dto.BoardResDto;
+import com.kh.springJpa241217.dto.CommentReqDto;
 import com.kh.springJpa241217.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -87,5 +88,17 @@ public class BoardController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(boardResDtoList);
+    }
+    // 댓글 추가
+    @PostMapping("/{boardId}/comments")
+    public ResponseEntity<Boolean> addComment(@PathVariable Long boardId, @RequestBody CommentReqDto commentReqDto) {
+        boolean isSuccess = boardService.addComment(boardId, commentReqDto);
+        return ResponseEntity.ok(isSuccess);
+    }
+    // 댓글 삭제
+    @DeleteMapping("{boardId}/comments/{commentId}")
+    public ResponseEntity<Boolean> removeComment(@PathVariable Long boardId, @PathVariable Long commentId) {
+        boolean isRemove = boardService.removeComment(boardId, commentId);
+        return ResponseEntity.ok(isRemove);
     }
 }

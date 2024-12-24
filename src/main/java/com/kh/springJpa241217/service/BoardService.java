@@ -2,6 +2,7 @@ package com.kh.springJpa241217.service;
 
 import com.kh.springJpa241217.dto.BoardReqDto;
 import com.kh.springJpa241217.dto.BoardResDto;
+import com.kh.springJpa241217.dto.CommentReqDto;
 import com.kh.springJpa241217.dto.CommentResDto;
 import com.kh.springJpa241217.entity.Board;
 import com.kh.springJpa241217.entity.Comment;
@@ -55,7 +56,7 @@ public class BoardService {
         List<BoardResDto> boardResDtoList = new ArrayList<>();
         for(Board board : boards) {
             // convertEntityToDto를 통해서 BoardResDto를 반환 받아서 List에 추가
-            boardResDtoList.add(convertEntityToDto(board));
+            boardResDtoList.add(convertEntityToDtoWithoutComments(board));
         }
         return boardResDtoList;
     }
@@ -64,7 +65,7 @@ public class BoardService {
         List<Board> boards = boardRepository.findByTitleContaining(keyword);
         List<BoardResDto> boardResDtoList = new ArrayList<>();
         for(Board board : boards) {
-            boardResDtoList.add(convertEntityToDto(board));
+            boardResDtoList.add(convertEntityToDtoWithoutComments(board));
         }
         return boardResDtoList;
     }
@@ -80,7 +81,7 @@ public class BoardService {
         List<Board> boards = boardRepository.findAll(pageable).getContent();
         List<BoardResDto> boardResDtoList = new ArrayList<>();
         for(Board board : boards) {
-            boardResDtoList.add(convertEntityToDto(board));
+            boardResDtoList.add(convertEntityToDtoWithoutComments(board));
         }
         return boardResDtoList;
     }
@@ -149,6 +150,52 @@ public class BoardService {
         }
     }
 
+    @Transactional // 포함된 중간에 다른 쿼리문이 오류가 있을 경우 모두 롤백시킴
+    public boolean addComment(Long boardId, CommentReqDto commentReqDto) {
+        try {
+            // id로 board 객체 가져오기
+            Board board = boardRepository.findById(boardId)
+                    .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+            // email로 Member 객체 가져오기
+            Member member = memberRepository.findByEmail(commentReqDto.getEmail())
+                    .orElseThrow(() -> new RuntimeException("회원 정보가 존재하지 않습니다."));
+            // Dto - entity 로 변환
+            Comment comment = new Comment();
+            comment.setContent(commentReqDto.getContent());
+            comment.setMember(member);
+            comment.setBoard(board);
+            board.addComment(comment);
+            boardRepository.save(board);
+            return true;
+        } catch (Exception e) {
+            log.error("댓글 추가 실패: {}", e.getMessage());
+            return false;
+        }
+    }
+    @Transactional
+    public boolean removeComment(Long boardId, Long CommentId) {
+        try {
+            Board board = boardRepository.findById(boardId)
+                    .orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+            Comment targetComment = null;   // 지울 댓글에 대한 변수 생성
+            for (Comment comment : board.getComments()) {
+                if (comment.getCommentId().equals(CommentId)) {
+                    targetComment = comment;
+                    break;
+                }
+            }
+            if (targetComment == null) {
+                log.error("해당 댓글이 존재하지 않습니다.");
+            }
+            board.removeComment(targetComment);
+            boardRepository.save(board);
+            return true;
+        } catch (Exception e) {
+            log.error("댓글 삭제 실패: {}", e.getMessage());
+            return false;
+        }
+    }
+
     private BoardResDto convertEntityToDto(Board board) {
         BoardResDto boardResDto = new BoardResDto();
         boardResDto.setBoardId(board.getId());
@@ -169,6 +216,17 @@ public class BoardService {
             commentResDtoList.add(commentResDto);
         }
         boardResDto.setComments(commentResDtoList);
+        return boardResDto;
+    }
+    // 댓글 제외 DTO
+    private BoardResDto convertEntityToDtoWithoutComments(Board board) {
+        BoardResDto boardResDto = new BoardResDto();
+        boardResDto.setBoardId(board.getId());
+        boardResDto.setTitle(board.getTitle());
+        boardResDto.setContent(board.getContent());
+        boardResDto.setImgPath(board.getImgPath());
+        boardResDto.setEmail(board.getMember().getEmail());
+        boardResDto.setRegDate(board.getRegDate());
         return boardResDto;
     }
 }
