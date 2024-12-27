@@ -1,11 +1,17 @@
 package com.kh.springJpa241217.service;
 
-import com.kh.springJpa241217.dto.LoginReqDto;
 import com.kh.springJpa241217.dto.MemberReqDto;
+import com.kh.springJpa241217.dto.MemberResDto;
+import com.kh.springJpa241217.dto.TokenDto;
 import com.kh.springJpa241217.entity.Member;
+import com.kh.springJpa241217.jwt.TokenProvider;
 import com.kh.springJpa241217.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
@@ -16,66 +22,28 @@ import java.util.Optional;
 @RequiredArgsConstructor // 생성자를 생성
 @Transactional // 여러개의 작업을 하나의 논리적인 단위로 묶어줌
 public class AuthService {
-    // 생성자를 통한 의존성 주입, 생성자를 통해서 의존성 주입을 받는 경우 Autowired 생략
+    private final AuthenticationManagerBuilder managerBuilder; // 인증을 담당하는 클래스
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
+    // 생성자를 통한 의존성 주입, 생성자를 통해서 의존성 주입을 받는 경우 Autowired 생략
+
     // 회원가입 여부
     public boolean isMember(String email) {
         return memberRepository.existsByEmail(email); // 이메일이 존재하면 true, 없으면 false
     }
     // 회원가입
-    public boolean signUp(MemberReqDto memberReqDto) {
-        try {
-            Member member = convertDtoToEntity(memberReqDto);
-            memberRepository.save(member); // 회원가입, save() insert, update 역할
-            return true;
-        } catch (Exception e) {
-            log.error("회원가입 실패: {}", e.getMessage());
-            return false;
+    public MemberResDto signUp(MemberReqDto memberReqDto) {
+        if (memberRepository.existsByEmail(memberReqDto.getEmail())) {
+            throw new RuntimeException("이미 가입되어 있는 유저입니다");
         }
+        Member member = memberReqDto.toEntity(passwordEncoder);
+        return MemberResDto.of(memberRepository.save(member));
     }
     // 로그인
-    public boolean login(LoginReqDto loginReqDto) {
-        try {
-            Optional<Member> member = memberRepository
-                    .findByEmailAndPwd(loginReqDto.getEmail(), loginReqDto.getPwd());
-            return member.isPresent(); // 해당 객체가 있음을 의미
-        } catch (Exception e) {
-            log.error("로그인 실패: {}", e.getMessage());
-            return false;
-        }
+    public TokenDto login(MemberReqDto memberReqDto) {
+        UsernamePasswordAuthenticationToken authenticationToken = memberReqDto.toAuthentication();
+        Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
+        return tokenProvider.generateTokenDto(authentication);
     }
-
-    // 회원가입 DTO -> Entity
-    private Member convertDtoToEntity(MemberReqDto memberReqDto) {
-        Member member = new Member();
-        member.setEmail(memberReqDto.getEmail());
-        member.setName(memberReqDto.getName());
-        member.setPwd(memberReqDto.getPwd());
-        return member;
-    }
-    // 모든 회원 조회
-//    public List<MemberResDto> findAllMembers() {
-//        List<Member> members = memberRepository.findAll(); // JpaRepository 기본 메서드 활용
-//        return members.stream()
-//                .map(this::convertEntityToDto) // Entity -> DTO 변환
-//                .collect(Collectors.toList());
-//    }
-//
-//    // 특정 이메일로 회원 조회
-//    public MemberResDto findMemberByEmail(String email) {
-//        Optional<Member> memberOpt = memberRepository.findByEmail(email);
-//        return memberOpt.map(this::convertEntityToDto).orElse(null); // Optional 처리
-//    }
-//
-//    // Entity -> DTO 변환 (생성자 사용)
-//    private MemberResDto convertEntityToDto(Member member) {
-//        // 생성자를 사용하여 DTO 객체 생성
-//        return new MemberResDto(
-//                member.getEmail(),
-//                member.getName(),
-//                member.getImgPath(),
-//                member.getRegDate()
-//        );
-//    }
-
 }

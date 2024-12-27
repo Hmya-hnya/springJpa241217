@@ -1,10 +1,7 @@
 package com.kh.springJpa241217.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -17,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter @Setter
 @Slf4j
 @NoArgsConstructor
+@ToString
 public class ChatRoomResDto {
     private String roomId;  // 채팅방 Id
     private String name;    // 채팅방 이름

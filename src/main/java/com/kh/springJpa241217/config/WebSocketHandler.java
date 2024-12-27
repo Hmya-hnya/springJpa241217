@@ -35,6 +35,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
         if (chatMessage.getType() == ChatMessageDto.MessageType.ENTER) {
             sessionRoomIdMap.put(session, chatMessage.getRoomId());
+            chatService.addSessionAndHandleEnter(roomId, session, chatMessage);
         } else if (chatMessage.getType() == ChatMessageDto.MessageType.CLOSE) {
             chatService.removeSessionAndHandleExit(roomId, session, chatMessage);
         } else {

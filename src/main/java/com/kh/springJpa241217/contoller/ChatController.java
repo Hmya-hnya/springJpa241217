@@ -6,6 +6,7 @@ import com.kh.springJpa241217.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +34,9 @@ public class ChatController {
     }
     // 특정 아이디로 개설된 채팅방 목록
     @GetMapping("/room/{roomId}")
-    public ChatRoomResDto findRoomById(@PathVariable String roomId){
-        return chatService.findRoomById(roomId);
+    public ResponseEntity<ChatRoomResDto> findRoomById(@PathVariable String roomId){
+        ChatRoomResDto rst = chatService.findRoomById(roomId);
+        log.warn("채팅 결과 : {}",rst);
+        return ResponseEntity.ok(rst);
     }
 }

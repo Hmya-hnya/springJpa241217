@@ -205,17 +205,17 @@ public class BoardService {
         boardResDto.setEmail(board.getMember().getEmail());
         boardResDto.setRegDate(board.getRegDate());
 
-        List<CommentResDto> commentResDtoList = new ArrayList<>();
-        for(Comment comment : board.getComments()) {
-            CommentResDto commentResDto = new CommentResDto();
-            commentResDto.setEmail(comment.getMember().getEmail());
-            commentResDto.setBoardId(comment.getBoard().getId());
-            commentResDto.setCommentId(comment.getCommentId());
-            commentResDto.setContent(comment.getContent());
-            commentResDto.setRegDate(comment.getRegDate());
-            commentResDtoList.add(commentResDto);
-        }
-        boardResDto.setComments(commentResDtoList);
+//        List<CommentResDto> commentResDtoList = new ArrayList<>();
+//        for(Comment comment : board.getComments()) {
+//            CommentResDto commentResDto = new CommentResDto();
+//            commentResDto.setEmail(comment.getMember().getEmail());
+//            commentResDto.setBoardId(comment.getBoard().getId());
+//            commentResDto.setCommentId(comment.getCommentId());
+//            commentResDto.setContent(comment.getContent());
+//            commentResDto.setRegDate(comment.getRegDate());
+//            commentResDtoList.add(commentResDto);
+//        }
+//        boardResDto.setComments(commentResDtoList);
         return boardResDto;
     }
     // 댓글 제외 DTO
