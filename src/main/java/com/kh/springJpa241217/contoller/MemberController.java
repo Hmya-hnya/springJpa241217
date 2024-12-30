@@ -21,6 +21,7 @@ public class MemberController {
     //회원 전체 조회
     @GetMapping("/memberList")
     public ResponseEntity<List<MemberResDto>> getAllMembers() {
+        log.error("전체 회원조회 요청 수신 확인");
         List<MemberResDto> members = memberService.getMemberList();
         return ResponseEntity.ok(members);
     }
